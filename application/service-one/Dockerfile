@@ -3,6 +3,8 @@ FROM openjdk:8-jre
 # environment
 EXPOSE 8082
 
+pwd
+
 # executable
 COPY target/service-one.jar app.jar
 
