@@ -58,7 +58,7 @@ spring:
   data:
     mongodb.uri: mongodb://service-one-db/service-one
   rabbitmq:
-    host: rabbit
+    host: rabbitmq
     port: 5672
     username: docker
     password: docker
