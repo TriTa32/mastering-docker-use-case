@@ -117,6 +117,9 @@ services:
   # Web Application
   # ---------------------------
   web-application:
+    build: 
+        context: ../application/web-application/
+        dockerfile: ../application/web-application/Dockerfile
     tty: true
     init: true
     privileged: true
