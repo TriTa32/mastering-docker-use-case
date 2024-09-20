@@ -7,7 +7,7 @@ services:
   api-gateway:
     build: 
         context: ../application/api-gateway/
-        dockerfile: ../application/api-gateway/Dockerfile
+        dockerfile: Dockerfile
     tty: true
     init: true
     privileged: true
@@ -28,7 +28,7 @@ services:
   service-one:
     build: 
         context: ../application/service-one/
-        dockerfile: ../application/ervice-one/Dockerfile
+        dockerfile: Dockerfile
     depends_on:
       - service-one-db
     tty: true
@@ -75,7 +75,7 @@ services:
   service-two:
     build: 
         context: ../application/service-two/
-        dockerfile: ../application/ervice-two/Dockerfile
+        dockerfile: Dockerfile
     depends_on:
         - service-two-db
     tty: true
@@ -119,7 +119,7 @@ services:
   web-application:
     build: 
         context: ../application/web-application/
-        dockerfile: ../application/web-application/Dockerfile
+        dockerfile: Dockerfile
     tty: true
     init: true
     privileged: true
