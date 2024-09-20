@@ -71,7 +71,7 @@ services:
   service-two:
     build: ../application/service-two/
     depends_on:
-            - service-two-db
+        - service-two-db
     tty: true
     init: true
     privileged: true
@@ -172,14 +172,12 @@ services:
         -data-dir=consul/data -datacenter=blr
 
 networks:
-  frontend:
-    name: build_frontend
-    external: true
-    driver: bridge
-  backend:
-    name: build_backend
-    external: true
-    driver: bridge
+    build_frontend:
+        name: build_frontend
+        driver: bridge
+    build_backend:
+        name: build_backend
+        driver: bridge
 
 volumes:
   mongodata:
