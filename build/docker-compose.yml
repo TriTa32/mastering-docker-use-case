@@ -173,11 +173,11 @@ services:
 
 networks:
   frontend:
-    name: frontend
+    name: build_frontend
     external: true
     driver: bridge
   backend:
-    name: backend
+    name: build_backend
     external: true
     driver: bridge
 
