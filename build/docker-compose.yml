@@ -181,4 +181,6 @@ networks:
 
 volumes:
   mongodata:
+  data:
+  dist:
   
