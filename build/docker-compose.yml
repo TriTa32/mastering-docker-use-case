@@ -180,7 +180,7 @@ networks:
         driver: bridge
 
 volumes:
-  mongodata:
+  build_mongodata:
   data:
   dist:
   
