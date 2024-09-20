@@ -105,7 +105,7 @@ services:
         - MYSQL_DATABASE=service-two
         - MYSQL_USER=service-two
         - MYSQL_PASSWORD=service-two
-    image: mysql/mysql-server:5.7
+    image: mysql/mysql-server:latest
 
   # ---------------------------
   # Web Application
