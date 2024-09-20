@@ -5,7 +5,9 @@ services:
   # API Gateway
   # ---------------------------
   api-gateway:
-    build: ../application/api-gateway/
+    build: 
+        context: ../application/api-gateway/
+        dockerfile: ../application/api-gateway/Dockerfile
     tty: true
     init: true
     privileged: true
@@ -24,7 +26,9 @@ services:
   # Service One
   # ---------------------------
   service-one:
-    build: ../application/service-one/
+    build: 
+        context: ../application/service-one/
+        dockerfile: ../application/ervice-one/Dockerfile
     depends_on:
       - service-one-db
     tty: true
@@ -69,7 +73,9 @@ services:
   # Service Two
   # ---------------------------
   service-two:
-    build: ../application/service-two/
+    build: 
+        context: ../application/service-two/
+        dockerfile: ../application/ervice-two/Dockerfile
     depends_on:
         - service-two-db
     tty: true
