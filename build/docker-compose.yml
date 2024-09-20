@@ -174,9 +174,11 @@ services:
 networks:
   frontend:
     name: frontend
+    external: true
     driver: bridge
   backend:
     name: backend
+    external: true
     driver: bridge
 
 volumes:
