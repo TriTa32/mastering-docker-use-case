@@ -8,9 +8,8 @@ services:
     image: maven:3.8-openjdk-11
     volumes:
       - ../:/app  # Ensure this points to the correct directory containing the pom.xml
-      - maven_cache:/root/.m2
     working_dir: /app
-    command: mvn clean package -DskipTests
+    command: mvn clean package  # Run mvn clean package to generate the JAR
     networks:
       - build_backend
 
@@ -18,11 +17,9 @@ services:
   # API Gateway
   # ---------------------------
   api-gateway:
-    build: 
+    build:
       context: ../application/api-gateway/
       dockerfile: Dockerfile
-    depends_on:
-      - maven
     tty: true
     init: true
     privileged: true
@@ -41,12 +38,11 @@ services:
   # Service One
   # ---------------------------
   service-one:
-    build: 
+    build:
       context: ../application/service-one/
       dockerfile: Dockerfile
     depends_on:
-      - service-one-db
-      - maven
+      - maven  # Wait for Maven to finish building the JAR
     tty: true
     init: true
     privileged: true
@@ -88,12 +84,11 @@ services:
   # Service Two
   # ---------------------------
   service-two:
-    build: 
+    build:
       context: ../application/service-two/
       dockerfile: Dockerfile
     depends_on:
-      - service-two-db
-      - maven
+      - maven  # Wait for Maven to finish building the JAR
     tty: true
     init: true
     privileged: true
@@ -132,7 +127,7 @@ services:
   # Web Application
   # ---------------------------
   web-application:
-    build: 
+    build:
       context: ../application/web-application/
       dockerfile: Dockerfile
     tty: true
@@ -171,7 +166,8 @@ services:
     image: rabbitmq:3.8-management-alpine
 
   # ---------------------------
-  # Registration and Discovery Cluster
+  # Registration and
+  # Discovery Cluster
   # ---------------------------
   consul:
     tty: true
