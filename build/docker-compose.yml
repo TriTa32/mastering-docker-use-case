@@ -7,13 +7,8 @@ services:
   maven:
     image: maven:3.8-openjdk-11
     volumes:
-      - ../:/app
-      - maven_cache:/root/.m2
+      - ../:/app  # Ensure this points to the correct directory containing the pom.xml
     working_dir: /app
-    profiles:
-      - tools
-    environment:
-      - MAVEN_CONFIG=/root/.m2
     command: mvn clean package -DskipTests
     networks:
       - build_backend
