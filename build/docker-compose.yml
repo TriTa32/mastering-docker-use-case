@@ -10,8 +10,6 @@ services:
       - ../:/app
       - maven_cache:/root/.m2
     working_dir: /app
-    profiles:
-      - tools
     environment:
       - MAVEN_CONFIG=/root/.m2
     command: mvn clean package -DskipTests
