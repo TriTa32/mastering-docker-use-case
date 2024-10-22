@@ -1,9 +1,6 @@
 version: '3.8'
 
 services:
-  # ---------------------------
-  # Maven Build Service
-  # ---------------------------
   maven:
     image: maven:3.8-openjdk-11
     volumes:
@@ -14,8 +11,7 @@ services:
       - MAVEN_CONFIG=/root/.m2
     command: mvn clean package -DskipTests
     networks:
-      - build_backend
-      
+      - build_backend   
   # ---------------------------
   # API Gateway
   # ---------------------------
