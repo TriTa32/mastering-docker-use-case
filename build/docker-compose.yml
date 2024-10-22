@@ -2,12 +2,27 @@ version: '3.8'
 
 services:
   # ---------------------------
+  # Maven Build Service
+  # ---------------------------
+  maven:
+    image: maven:3.8-openjdk-11
+    volumes:
+      - ../:/app
+      - maven_cache:/root/.m2
+    working_dir: /app
+    command: tail -f /dev/null  # Keeps container running
+    networks:
+      - build_backend
+
+  # ---------------------------
   # API Gateway
   # ---------------------------
   api-gateway:
     build: 
         context: ../application/api-gateway/
         dockerfile: Dockerfile
+    depends_on:
+      - maven
     tty: true
     init: true
     privileged: true
@@ -22,6 +37,7 @@ services:
     environment:
         - SPRING_PROFILES_ACTIVE=docker
     # image: build_api-gateway
+
   # ---------------------------
   # Service One
   # ---------------------------
@@ -31,6 +47,7 @@ services:
         dockerfile: Dockerfile
     depends_on:
       - service-one-db
+      - maven
     tty: true
     init: true
     privileged: true
@@ -78,6 +95,7 @@ services:
         dockerfile: Dockerfile
     depends_on:
         - service-two-db
+        - maven
     tty: true
     init: true
     privileged: true
@@ -192,4 +210,4 @@ volumes:
   build_mongodata:
   data:
   dist:
-  
+  maven_cache:    # New volume for Maven cache
