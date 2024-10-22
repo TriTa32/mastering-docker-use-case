@@ -10,32 +10,38 @@ services:
       - ../:/app
       - maven_cache:/root/.m2
     working_dir: /app
-    command: tail -f /dev/null  # Keeps container running
+    profiles:
+      - tools
+    environment:
+      - MAVEN_CONFIG=/root/.m2
+    command: mvn clean package -DskipTests
     networks:
       - build_backend
-
+      
   # ---------------------------
   # API Gateway
   # ---------------------------
   api-gateway:
     build: 
-        context: ../application/api-gateway/
-        dockerfile: Dockerfile
+      context: ../application/api-gateway/
+      dockerfile: Dockerfile
+      target: builder  # Specifies the build stage
     depends_on:
-      - maven
+      maven:
+        condition: service_completed_successfully
     tty: true
     init: true
     privileged: true
     ports:
-        - 8080:8080
+      - 8080:8080
     expose:
-        - "8080"
+      - "8080"
     networks:
-        - build_backend
+      - build_backend
     hostname: api-gateway
     container_name: api-gateway
     environment:
-        - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker
     # image: build_api-gateway
 
   # ---------------------------
@@ -43,22 +49,25 @@ services:
   # ---------------------------
   service-one:
     build: 
-        context: ../application/service-one/
-        dockerfile: Dockerfile
+      context: ../application/service-one/
+      dockerfile: Dockerfile
+      target: builder
     depends_on:
-      - service-one-db
-      - maven
+      maven:
+        condition: service_completed_successfully
+      service-one-db:
+        condition: service_started
     tty: true
     init: true
     privileged: true
     ports:
-        - 8082:8082
+      - 8082:8082
     networks:
-        - build_backend
+      - build_backend
     hostname: service-one
     container_name: service-one
     environment:
-        - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker
     # image: build_service-one
 
   # ---------------------------
@@ -89,24 +98,27 @@ services:
   # ---------------------------
   # Service Two
   # ---------------------------
-  service-two:
+   service-two:
     build: 
-        context: ../application/service-two/
-        dockerfile: Dockerfile
+      context: ../application/service-two/
+      dockerfile: Dockerfile
+      target: builder
     depends_on:
-        - service-two-db
-        - maven
+      maven:
+        condition: service_completed_successfully
+      service-two-db:
+        condition: service_started
     tty: true
     init: true
     privileged: true
     ports:
-        - 8084:8084
+      - 8084:8084
     networks:
-        - build_backend
+      - build_backend
     hostname: service-two
     container_name: service-two
     environment:
-        - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker
     # image: build_service-two
 
   # ---------------------------
@@ -210,4 +222,4 @@ volumes:
   build_mongodata:
   data:
   dist:
-  maven_cache:    # New volume for Maven cache
+  maven_cache:
