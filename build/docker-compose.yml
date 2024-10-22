@@ -10,6 +10,8 @@ services:
       - ../:/app
       - maven_cache:/root/.m2
     working_dir: /app
+    profiles:
+      - tools
     environment:
       - MAVEN_CONFIG=/root/.m2
     command: mvn clean package -DskipTests
@@ -133,7 +135,6 @@ services:
     build:
       context: ../application/web-application/
       dockerfile: Dockerfile
-      target: builder  # If using multi-stage builds
     tty: true
     init: true
     privileged: true
@@ -170,7 +171,8 @@ services:
     image: rabbitmq:3.8-management-alpine
 
   # ---------------------------
-  # Registration and Discovery Cluster
+  # Registration and
+  # Discovery Cluster
   # ---------------------------
   consul:
     tty: true
