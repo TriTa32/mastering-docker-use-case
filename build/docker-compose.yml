@@ -2,19 +2,14 @@ version: '3.8'
 
 services:
   # ---------------------------
-  # Maven Tools Service (for development)
+  # Maven Build Service
   # ---------------------------
   maven:
     image: maven:3.8-openjdk-11
     volumes:
-      - ../:/app
-      - maven_cache:/root/.m2
+      - ../:/app  # Ensure this points to the correct directory containing the pom.xml
     working_dir: /app
-    profiles:
-      - tools
-    environment:
-      - MAVEN_CONFIG=/root/.m2
-    command: tail -f /dev/null  # Keeps container running for development use
+    command: mvn clean package  # Run mvn clean package to generate the JAR
     networks:
       - build_backend
 
@@ -22,7 +17,7 @@ services:
   # API Gateway
   # ---------------------------
   api-gateway:
-    build: 
+    build:
       context: ../application/api-gateway/
       dockerfile: Dockerfile
     tty: true
@@ -43,11 +38,11 @@ services:
   # Service One
   # ---------------------------
   service-one:
-    build: 
+    build:
       context: ../application/service-one/
       dockerfile: Dockerfile
     depends_on:
-      - service-one-db
+      - maven  # Wait for Maven to finish building the JAR
     tty: true
     init: true
     privileged: true
@@ -89,11 +84,11 @@ services:
   # Service Two
   # ---------------------------
   service-two:
-    build: 
+    build:
       context: ../application/service-two/
       dockerfile: Dockerfile
     depends_on:
-      - service-two-db
+      - maven  # Wait for Maven to finish building the JAR
     tty: true
     init: true
     privileged: true
@@ -132,7 +127,7 @@ services:
   # Web Application
   # ---------------------------
   web-application:
-    build: 
+    build:
       context: ../application/web-application/
       dockerfile: Dockerfile
     tty: true
@@ -191,8 +186,7 @@ services:
     volumes:
       - data:/consul/data
     image: consul:1.7.3
-    command: agent -server -client 0.0.0.0 -ui -bootstrap-expect=1
-      -data-dir=consul/data -datacenter=blr
+    command: agent -server -client 0.0.0.0 -ui -bootstrap-expect=1 -data-dir=consul/data -datacenter=blr
 
 networks:
   build_frontend:
