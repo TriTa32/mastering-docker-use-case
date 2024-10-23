@@ -14,7 +14,7 @@ FROM openjdk:8-jre
 EXPOSE 8084
 
 # executable
-COPY --from=builder /app/target/service-one.jar app.jar
+COPY --from=builder /app/target/service-two.jar app.jar
 
 # run app as user 'booter'
 RUN touch /app.jar
