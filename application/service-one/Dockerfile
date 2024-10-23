@@ -14,7 +14,7 @@ FROM openjdk:8-jre
 EXPOSE 8082
 
 # executable
-COPY target/service-one.jar app.jar
+COPY --from=builder /app/target/api-gateway.jar app.jar
 
 # run app as user 'booter'
 RUN touch /app.jar
