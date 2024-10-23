@@ -1,3 +1,13 @@
+# Build stage
+FROM maven:3.8-jdk-8 AS builder
+
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+
+# Run maven build
+RUN mvn clean package
+
 FROM openjdk:8-jre
 
 # environment
