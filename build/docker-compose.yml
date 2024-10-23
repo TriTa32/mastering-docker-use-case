@@ -1,25 +1,25 @@
 version: '3.8'
 
 services:
-  # ---------------------------
   # Maven Build Service
-  # ---------------------------
   maven:
-    image: maven:3.8-openjdk-11
+    image: maven:3.8-jdk-8
     volumes:
-      - ../:/app  # Ensure this points to the correct directory containing the pom.xml
+      - ../:/app
+      - maven_cache:/root/.m2
     working_dir: /app
-    command: mvn clean package  # Run mvn clean package to generate the JAR
+    command: mvn clean package -DskipTests
     networks:
       - build_backend
 
-  # ---------------------------
   # API Gateway
-  # ---------------------------
   api-gateway:
     build:
       context: ../application/api-gateway/
       dockerfile: Dockerfile
+    depends_on:
+      maven:
+        condition: service_completed_successfully
     tty: true
     init: true
     privileged: true
@@ -34,15 +34,16 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
-  # ---------------------------
   # Service One
-  # ---------------------------
   service-one:
     build:
       context: ../application/service-one/
       dockerfile: Dockerfile
     depends_on:
-      - maven  # Wait for Maven to finish building the JAR
+      maven:
+        condition: service_completed_successfully
+      service-one-db:
+        condition: service_started
     tty: true
     init: true
     privileged: true
@@ -55,9 +56,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
-  # ---------------------------
   # Service One Database
-  # ---------------------------
   service-one-db:
     tty: true
     init: true
@@ -80,15 +79,16 @@ services:
     image: mongo:3.7
     command: mongod --smallfiles
 
-  # ---------------------------
   # Service Two
-  # ---------------------------
   service-two:
     build:
       context: ../application/service-two/
       dockerfile: Dockerfile
     depends_on:
-      - maven  # Wait for Maven to finish building the JAR
+      maven:
+        condition: service_completed_successfully
+      service-two-db:
+        condition: service_started
     tty: true
     init: true
     privileged: true
@@ -101,9 +101,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
-  # ---------------------------
   # Service Two Database
-  # ---------------------------
   service-two-db:
     tty: true
     init: true
@@ -123,9 +121,7 @@ services:
       - MYSQL_PASSWORD=service-two
     image: mysql/mysql-server:latest
 
-  # ---------------------------
   # Web Application
-  # ---------------------------
   web-application:
     build:
       context: ../application/web-application/
@@ -141,9 +137,7 @@ services:
     volumes:
       - dist:/usr/share/nginx/html
 
-  # ---------------------------
   # Messaging Queue Cluster
-  # ---------------------------
   rabbit:
     tty: true
     init: true
@@ -165,10 +159,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=docker
     image: rabbitmq:3.8-management-alpine
 
-  # ---------------------------
-  # Registration and
-  # Discovery Cluster
-  # ---------------------------
+  # Registration and Discovery Cluster
   consul:
     tty: true
     init: true
@@ -186,7 +177,8 @@ services:
     volumes:
       - data:/consul/data
     image: consul:1.7.3
-    command: agent -server -client 0.0.0.0 -ui -bootstrap-expect=1 -data-dir=consul/data -datacenter=blr
+    command: agent -server -client 0.0.0.0 -ui -bootstrap-expect=1
+        -data-dir=consul/data -datacenter=blr
 
 networks:
   build_frontend:
