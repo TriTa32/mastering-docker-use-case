@@ -8,6 +8,7 @@ services:
     build: 
       context: ../application/api-gateway/
       dockerfile: Dockerfile
+    image: localhost:30400/api-gateway:latest
     tty: true
     init: true
     privileged: true
@@ -29,6 +30,7 @@ services:
     build: 
       context: ../application/service-one/
       dockerfile: Dockerfile
+    image: localhost:30400/service-one:latest
     depends_on:
       - service-one-db
     tty: true
@@ -75,6 +77,7 @@ services:
     build: 
       context: ../application/service-two/
       dockerfile: Dockerfile
+    image: localhost:30400/service-two:latest
     depends_on:
       - service-two-db
     tty: true
@@ -118,6 +121,7 @@ services:
     build: 
       context: ../application/web-application/
       dockerfile: Dockerfile
+    image: localhost:30400/web-application:latest
     tty: true
     init: true
     privileged: true
